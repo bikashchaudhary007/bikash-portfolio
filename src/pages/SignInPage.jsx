@@ -1,61 +1,121 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import { app } from "../Firebase";
 
 const SignInPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const auth = getAuth(app);
+
+  const signInHandler = async (e) => {
+    e.preventDefault();
+    // Handle sign-up logic here
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log("User logged in:", user);
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error("Error logging in:", errorCode, errorMessage);
+      });
+  };
   return (
-    <div>
-      <form class="max-w-sm mx-auto">
-        <div class="mb-5">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 p-4">
+      <form
+        onSubmit={signInHandler}
+        className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-6"
+      >
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-center text-gray-800">
+          Login to Your Account
+        </h2>
+        <p className="text-sm text-center text-gray-500">
+          Sign in to continue to your account
+        </p>
+
+        {/* Email */}
+        <div>
           <label
-            for="email"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            htmlFor="email"
+            className="block mb-2 text-sm font-medium text-gray-700"
           >
-            Your email
+            Email Address
           </label>
           <input
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
             type="email"
             id="email"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="name@flowbite.com"
+            placeholder="you@example.com"
             required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
-        <div class="mb-5">
+
+        {/* Password */}
+        <div>
           <label
-            for="password"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            htmlFor="password"
+            className="block mb-2 text-sm font-medium text-gray-700"
           >
-            Your password
+            Password
           </label>
           <input
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
             type="password"
             id="password"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="••••••••"
             required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           />
         </div>
-        <div class="flex items-start mb-5">
-          <div class="flex items-center h-5">
+
+        {/* Remember me */}
+        <div className="flex items-center justify-between">
+          <label className="flex items-center space-x-2 text-sm text-gray-600">
             <input
-              id="remember"
               type="checkbox"
-              value=""
-              class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-              required
+              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
             />
-          </div>
-          <label
-            for="remember"
-            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >
-            Remember me
+            <span>Remember me</span>
           </label>
+          <a href="#" className="text-sm text-indigo-600 hover:underline">
+            Forgot password?
+          </a>
         </div>
+
+        {/* Submit Button */}
         <button
           type="submit"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition"
         >
-          Submit
+          Sign In
         </button>
+
+        {/* Footer */}
+        <p className="text-sm text-center text-gray-600">
+          Don’t have an account?{" "}
+          <a
+            onClick={() => navigate("/signUpPage")}
+            className="font-medium text-indigo-600 hover:underline"
+          >
+            Sign up
+          </a>
+        </p>
       </form>
     </div>
   );
